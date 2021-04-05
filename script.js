@@ -111,7 +111,6 @@ toCurrencyFixedBtns.forEach((elem) => {
             el.classList.remove('purpleSelected')
          })     
         elem.classList.add('purpleSelected');
-        console.log(toCurrency)
     })
 })
 
