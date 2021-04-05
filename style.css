@@ -193,7 +193,7 @@ select:focus {
     top: 0;
     z-index: 100;
     transition: 0.6s;
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
 }
@@ -210,6 +210,6 @@ select:focus {
    align-items: center;
    justify-content: center;
 }
-.hide {
+/* .hide {
     display: none;
-}
+} */

@@ -23,52 +23,46 @@ let exchangeToFrom = 0;
 
 let amount = 1;
 
+let flag = false;
+
 //Loader
 let mask = document.querySelector('.mask');
 
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        mask.classList.remove("hide");
-        setTimeout(() =>{
-          mask.classList.add("hide");
-        }, 1000);
-      }, 500); // delay 500 ms    
-});
+const showLoader = function() {
+    setTimeout(function() {
+        if (!flag) { 
+        mask.style.display = "flex";
+        }
+      }, 500); 
 
+}
+      
 //API 
-const getFromCurrency = async () => {
+const fetchData = async () => {
     if (fromCurrency === toCurrency) {
-        console.log('Выберите разные валюты');
-    }
-    try {
+        exchangeFromTo = 1;
+        exchangeToFrom = 1;
+        alert('Выберите разные валюты');
+    } else try {
+        showLoader();
         const response = await fetch(`https://api.ratesapi.io/api/latest?base=${fromCurrency}&symbols=${toCurrency}`)
         const data = await response.json();
         exchangeFromTo = data.rates[toCurrency];
+        const resp = await fetch(`https://api.ratesapi.io/api/latest?base=${toCurrency}&symbols=${fromCurrency}`)
+        const data2 = await resp.json();
+        exchangeToFrom = data2.rates[fromCurrency];
+        flag = true;
+        mask.style.display = "none";    
     } catch (err) {
         console.error(err);
         alert('Что-то пошло нет так');
     }
     exchangeRate1.innerHTML = `1 ${fromCurrency} = ${exchangeFromTo.toFixed(4)} ${toCurrency}`;
-    exchangeRate2.value = exchangeRate1.value * exchangeFromTo.toFixed(4);
-    calcInputFromTo();
-}
-
-const getToCurrency = async () => {
-    if (fromCurrency === toCurrency) {
-        console.log('Выберите разные валюты');
-    }
-    try {
-        const response = await fetch(`https://api.ratesapi.io/api/latest?base=${toCurrency}&symbols=${fromCurrency}`)
-        const data = await response.json();
-        exchangeToFrom = data.rates[fromCurrency];
-        
-    } catch (err) {
-        console.error(err);
-        alert('Что-то пошло нет так');
-    }
     exchangeRate2.innerHTML = `1 ${toCurrency} = ${exchangeToFrom.toFixed(4)} ${fromCurrency}`;
     calcInputFromTo();
 }
+
+fetchData();
 
 // Purple for 4 fixed From buttons on click
 fromCurrencyFixedBtns.forEach((elem) => {
@@ -78,29 +72,25 @@ fromCurrencyFixedBtns.forEach((elem) => {
             el.classList.remove('purpleSelected')
          })     
         elem.classList.add('purpleSelected');
-        console.log(fromCurrency)
     })
 })
 
 //Calculating rates for 4 From fixed buttons on click
 fromCurrencyFixedBtns.forEach((elem) => {
     elem.addEventListener('click', () => {
-        getFromCurrency();
-        getToCurrency();       
+        fetchData();       
     })
 })
 
 //Purple and rates for Select From btns on change
 fromCurrencySelectBtn.addEventListener('change', () => {
     fromCurrency = fromCurrencySelectBtn.value;
-    getFromCurrency();
-    getToCurrency();
+    fetchData();
     
     fromCurrencyBtns.forEach((el) =>{
         el.classList.remove('purpleSelected')
     })     
     fromCurrencySelectBtn.classList.add('purpleSelected');
-    console.log(fromCurrency)
 })
 
 // Purple for 4 fixed To buttons on click
@@ -117,16 +107,14 @@ toCurrencyFixedBtns.forEach((elem) => {
 //Calculating rates for 4 fixed To buttons on click
 toCurrencyFixedBtns.forEach((elem) => {
     elem.addEventListener('click', () => {
-        getFromCurrency();
-        getToCurrency();
+        fetchData();
     })
 })
 
 //Purple and rates for Select To btns on change
 toCurrencySelectBtn.addEventListener('change', () => {
     toCurrency = toCurrencySelectBtn.value;
-    getFromCurrency(); 
-    getToCurrency(); 
+    fetchData(); 
     
     toCurrencyBtns.forEach((el) =>{
         el.classList.remove('purpleSelected')
@@ -138,8 +126,7 @@ toCurrencySelectBtn.addEventListener('change', () => {
 //Input From value
 inputFrom.addEventListener('input', () => {
     calcInputFromTo();
-    getFromCurrency();
-    getToCurrency();
+    fetchData();
 })
 
 function calcInputFromTo() {
@@ -148,7 +135,7 @@ function calcInputFromTo() {
 
 //Input To value
 outputTo.addEventListener('input', () => {
-    calcInputToFrom()    
+    calcInputToFrom();    
 })
 
 function calcInputToFrom() {
@@ -190,8 +177,5 @@ reverseCalc.addEventListener('click', () => {
    if (document.querySelectorAll('.currenciesAllTo div.purpleSelected').length === 0) {
         toCurrencySelectBtn.classList.add('purpleSelected');
    }
-
-    getFromCurrency();
-    getToCurrency();
-    
+   fetchData();   
 })
