@@ -73,7 +73,7 @@
                     </div>
 
                     <div class="currency-field">
-                        <input class="user-currency input-from" type="number" value="1" onchange="this.value = this.value.replace(/,/g, '.')"/>
+                        <input class="user-currency input-from" onkeyup="validate()" type="text" value="1">
                         <p class="rate rate-input"></p> 
                     </div>
                 </div>
@@ -124,7 +124,7 @@
                     </div>
 
                     <div class="currency-field">
-                        <input class="user-currency output-to" type="number">
+                        <input class="user-currency output-to" onkeyup="validate2()" type="text">
                         <p class="rate rate-output"></p> 
                     </div>
 

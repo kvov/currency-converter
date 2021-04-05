@@ -48,18 +48,22 @@ const fetchData = async () => {
         const response = await fetch(`https://api.ratesapi.io/api/latest?base=${fromCurrency}&symbols=${toCurrency}`)
         const data = await response.json();
         exchangeFromTo = data.rates[toCurrency];
+        
         const resp = await fetch(`https://api.ratesapi.io/api/latest?base=${toCurrency}&symbols=${fromCurrency}`)
         const data2 = await resp.json();
         exchangeToFrom = data2.rates[fromCurrency];
         flag = true;
-        mask.style.display = "none";    
+        mask.style.display = "none";
+        exchangeRate1.innerHTML = `1 ${fromCurrency} = ${exchangeFromTo.toFixed(4)} ${toCurrency}`; 
+        exchangeRate2.innerHTML = `1 ${toCurrency} = ${exchangeToFrom.toFixed(4)} ${fromCurrency}`; 
+        calcInputFromTo();  
     } catch (err) {
         console.error(err);
         alert('Что-то пошло нет так');
     }
-    exchangeRate1.innerHTML = `1 ${fromCurrency} = ${exchangeFromTo.toFixed(4)} ${toCurrency}`;
-    exchangeRate2.innerHTML = `1 ${toCurrency} = ${exchangeToFrom.toFixed(4)} ${fromCurrency}`;
-    calcInputFromTo();
+    
+    
+    
 }
 
 fetchData();
@@ -124,22 +128,34 @@ toCurrencySelectBtn.addEventListener('change', () => {
 })
 
 //Input From value
+
+function validate() {
+    inputFrom.value = inputFrom.value.replace(/,/g, ".");
+    console.log(inputFrom.value);
+}
+
 inputFrom.addEventListener('input', () => {
     calcInputFromTo();
     fetchData();
 })
 
 function calcInputFromTo() {
-    outputTo.value = (inputFrom.value * exchangeFromTo).toFixed(4);
+    outputTo.value = ((parseFloat(inputFrom.value)) * exchangeFromTo).toFixed(4);
 }
 
 //Input To value
+
+function validate2() {
+    outputTo.value = outputTo.value.replace(/,/g, ".");
+    
+}
+
 outputTo.addEventListener('input', () => {
     calcInputToFrom();    
 })
 
 function calcInputToFrom() {
-    inputFrom.value = (outputTo.value * exchangeToFrom).toFixed(4);
+    inputFrom.value = ((parseFloat(outputTo.value)) * exchangeToFrom).toFixed(4);
 }
 
 reverseCalc.addEventListener('click', () => {
